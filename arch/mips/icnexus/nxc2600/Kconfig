@@ -1,0 +1,37 @@
+
+choice
+	prompt "Machine type"
+	depends on ICNEXUS_NXC2600
+	default ICNEXUS_NXC2600_DVB2
+
+config ICNEXUS_NXC2600_DVB2
+	bool "NXC2600 DVB2"
+
+config ICNEXUS_NXC2600_DVB3
+	bool "NXC2600 DVB3"
+
+endchoice
+
+
+choice
+        prompt "CPU type"
+        depends on ICNEXUS_NXC2600
+        default ICNEXUS_NXC2620
+
+config ICNEXUS_NXC2610
+        bool "NXC2610"
+
+config ICNEXUS_NXC2620
+        bool "NXC2620"
+
+endchoice
+
+config NXC2600_CPU_CLOCK
+	int "CPU Speed"
+	depends on ICNEXUS_NXC2600
+	default 336000000
+
+config NXC2600_EXTAL_CLOCK
+	int "Extal clock"
+	depends on ICNEXUS_NXC2600
+	default 3686400
