@@ -344,7 +344,7 @@ int setup_irq(unsigned int irq, struct irqaction *new)
 				       "function for IRQ %d (%s)\n", irq,
 				       desc->chip ? desc->chip->name :
 				       "unknown");
-		} else
+		} //else
 			compat_irq_chip_set_default_handler(desc);
 
 		desc->status &= ~(IRQ_AUTODETECT | IRQ_WAITING |

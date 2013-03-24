@@ -612,7 +612,7 @@ static int mtd_ioctl(struct inode *inode, struct file *file,
 		if (mtd->ecclayout->eccbytes > ARRAY_SIZE(oi.eccpos))
 			return -EINVAL;
 
-		oi.useecc = MTD_NANDECC_AUTOPLACE;
+		oi.useecc = MTD_NANDECC_AUTOPL_USR; //MTD_NANDECC_AUTOPLACE;
 		memcpy(&oi.eccpos, mtd->ecclayout->eccpos, sizeof(oi.eccpos));
 		memcpy(&oi.oobfree, mtd->ecclayout->oobfree,
 		       sizeof(oi.oobfree));

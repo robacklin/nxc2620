@@ -1955,6 +1955,11 @@ config NE_H8300
 	  Say Y here if you want to use the NE2000 compatible
 	  controller on the Renesas H8/300 processor.
 
+config NXC2620_MAC
+	tristate "IC Nexus NXC2620 on-chip ethernet support"
+	depends on ICNEXUS_NXC2620 && NET_ETHERNET
+	help
+
 source "drivers/net/fec_8xx/Kconfig"
 source "drivers/net/fs_enet/Kconfig"
 

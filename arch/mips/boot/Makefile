@@ -39,6 +39,12 @@ vmlinux.bin: $(VMLINUX)
 vmlinux.srec: $(VMLINUX)
 	$(OBJCOPY) -S -O srec $(strip-flags) $(VMLINUX) $(obj)/vmlinux.srec
 
+uImage: vmlinux.bin
+	@rm -f $(obj)/vmlinux.bin.gz
+	@gzip -9 $(obj)/vmlinux.bin
+	@mkimage -A mips -O linux -T kernel -C gzip -a $(LOADADDR) -e 0x`grep kernel_entry System.map | cut -f1 -d \ ` -n kernel -d $(obj)/vmlinux.bin.gz $(obj)/uImage.kernel
+	@cp $(obj)/uImage.kernel /tftpboot
+
 $(obj)/addinitrd: $(obj)/addinitrd.c
 	$(HOSTCC) -o $@ $^
 
@@ -46,4 +52,6 @@ clean-files += addinitrd \
 	       elf2ecoff \
 	       vmlinux.bin \
 	       vmlinux.ecoff \
-	       vmlinux.srec
+	       vmlinux.srec \
+	       vmlinux.bin.gz \
+	       uImage.kernel

@@ -40,6 +40,11 @@
 #include <linux/sm501.h>
 #include <linux/sm501-regs.h>
 
+#ifdef CONFIG_ICNEXUS_NXC2600
+#include <asm/cacheflush.h>
+#include <asm/mach-nxc2600/nxc2600.h>
+#endif
+
 #define NR_PALETTE	256
 
 enum sm501_controller {
@@ -661,7 +666,9 @@ static void sm501fb_panel_power(struct sm501fb_info *fbi, int to)
 
 		control |= SM501_DC_PANEL_CONTROL_FPEN;
 		writel(control, ctrl_reg);
-
+#ifdef CONFIG_ICNEXUS_NXC2600
+		nxc2600_lcd_on();
+#endif
 	} else if (!to && (control & SM501_DC_PANEL_CONTROL_VDD) != 0) {
 		/* disable panel power */
 
@@ -684,6 +691,9 @@ static void sm501fb_panel_power(struct sm501fb_info *fbi, int to)
 		writel(control, ctrl_reg);
 		sm501fb_sync_regs(fbi);
 		mdelay(10);
+#ifdef CONFIG_ICNEXUS_NXC2600
+		nxc2600_lcd_off();
+#endif
 	}
 
 	sm501fb_sync_regs(fbi);
@@ -815,6 +825,7 @@ static int sm501fb_setcolreg(unsigned regno,
 		base += SM501_DC_PANEL_PALETTE;
 
 	switch (info->fix.visual) {
+	case FB_VISUAL_DIRECTCOLOR:
 	case FB_VISUAL_TRUECOLOR:
 		/* true-colour, use pseuo-palette */
 
@@ -1500,7 +1511,7 @@ static struct sm501_platdata_fbsub sm501fb_pdata_pnl = {
 };
 
 static struct sm501_platdata_fb sm501fb_def_pdata = {
-	.fb_route		= SM501_FB_OWN,
+	.fb_route		= SM501_FB_CRT_PANEL, //SM501_FB_OWN, marvin+
 	.fb_crt			= &sm501fb_pdata_crt,
 	.fb_pnl			= &sm501fb_pdata_pnl,
 };
@@ -1518,18 +1529,18 @@ static int __init sm501fb_probe(struct platform_device *pdev)
 
 	/* allocate our framebuffers */
 
-	fbinfo_crt = framebuffer_alloc(sizeof(struct sm501fb_par), dev);
-	if (fbinfo_crt == NULL) {
-		dev_err(dev, "cannot allocate crt framebuffer\n");
-		return -ENOMEM;
-	}
-
 	fbinfo_pnl = framebuffer_alloc(sizeof(struct sm501fb_par), dev);
 	if (fbinfo_pnl == NULL) {
 		dev_err(dev, "cannot allocate panel framebuffer\n");
 		ret = -ENOMEM;
 		goto fbinfo_crt_alloc_fail;
 	}
+
+        fbinfo_crt = framebuffer_alloc(sizeof(struct sm501fb_par), dev);
+        if (fbinfo_crt == NULL) {
+                dev_err(dev, "cannot allocate crt framebuffer\n");
+                return -ENOMEM;
+        }
 
 	info = sm501fb_info_alloc(fbinfo_crt, fbinfo_pnl);
 	if (info == NULL) {
@@ -1556,14 +1567,6 @@ static int __init sm501fb_probe(struct platform_device *pdev)
 		goto sm501fb_start_fail;
 	}
 
-	/* CRT framebuffer setup */
-
-	ret = sm501fb_init_fb(fbinfo_crt, HEAD_CRT, driver_name_crt);
-	if (ret) {
-		dev_err(dev, "cannot initialise CRT fb\n");
-		goto sm501fb_start_fail;
-	}
-
 	/* Panel framebuffer setup */
 
 	ret = sm501fb_init_fb(fbinfo_pnl, HEAD_PANEL, driver_name_pnl);
@@ -1572,19 +1575,26 @@ static int __init sm501fb_probe(struct platform_device *pdev)
 		goto sm501fb_start_fail;
 	}
 
+        /* CRT framebuffer setup */
+
+        ret = sm501fb_init_fb(fbinfo_crt, HEAD_CRT, driver_name_crt);
+        if (ret) {
+                dev_err(dev, "cannot initialise CRT fb\n");
+                goto sm501fb_start_fail;
+        }
+
 	/* register framebuffers */
-
-	ret = register_framebuffer(fbinfo_crt);
-	if (ret < 0) {
-		dev_err(dev, "failed to register CRT fb (%d)\n", ret);
-		goto register_crt_fail;
-	}
-
 	ret = register_framebuffer(fbinfo_pnl);
 	if (ret < 0) {
 		dev_err(dev, "failed to register panel fb (%d)\n", ret);
 		goto register_pnl_fail;
 	}
+
+        ret = register_framebuffer(fbinfo_crt);
+        if (ret < 0) {
+                dev_err(dev, "failed to register CRT fb (%d)\n", ret);
+                goto register_crt_fail; 
+        }
 
 	dev_info(dev, "fb%d: %s frame buffer device\n",
 		 fbinfo_crt->node, fbinfo_crt->fix.id);

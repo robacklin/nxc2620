@@ -26,6 +26,10 @@
 #include <asm/semaphore.h>
 #include <asm/uaccess.h>
 #include <asm/byteorder.h>
+#if defined(CONFIG_ICNEXUS_NXC2600)
+#include <asm/cacheflush.h>
+#include <asm/mach-nxc2600/nxc2600.h>
+#endif
 
 #include "usb.h"
 #include "hcd.h"
@@ -2348,11 +2352,19 @@ static void hub_port_connect_change(struct usb_hub *hub, int port1,
 	struct device *hub_dev = hub->intfdev;
 	u16 wHubCharacteristics = le16_to_cpu(hub->descriptor->wHubCharacteristics);
 	int status, i;
- 
+
 	dev_dbg (hub_dev,
 		"port %d, status %04x, change %04x, %s\n",
 		port1, portstatus, portchange, portspeed (portstatus));
-
+#if defined(CONFIG_ICNEXUS_NXC2600)
+	if( (port1 == 1) && (!(REG32(NXC2600_SBA_CNTL)&NXC2600_SBA_CNTL_USB_PORT0_HOST)) && !strncmp(hub->hdev->product,"NXC2600",7))
+	{
+		dev_dbg(hub_dev,
+			"port %d is a device\n",
+			port1);
+		return;
+	}
+#endif
 	if (hub->has_indicators) {
 		set_port_led(hub, port1, HUB_LED_AUTO);
 		hub->indicator[port1-1] = INDICATOR_AUTO;

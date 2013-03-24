@@ -1572,8 +1572,8 @@ static int gs_setup_standard(struct usb_gadget *gadget,
 
 #ifdef CONFIG_USB_GADGET_DUALSPEED
 		case USB_DT_DEVICE_QUALIFIER:
-			if (!gadget->is_dualspeed)
-				break;
+			//if (!gadget->is_dualspeed)
+			//	break;
 			ret = min(wLength,
 				(u16)sizeof(struct usb_qualifier_descriptor));
 			memcpy(req->buf, &gs_qualifier_desc, ret);

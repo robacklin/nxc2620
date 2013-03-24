@@ -147,6 +147,11 @@
 #define	gadget_is_m66592(g)	0
 #endif
 
+#ifdef CONFIG_USB_GADGET_NXC2600
+#define	gadget_is_nxc2600(g)	!strcmp("nxc2600_udc", (g)->name)
+#else
+#define	gadget_is_nxc2600(g)	0
+#endif
 
 // CONFIG_USB_GADGET_SX2
 // CONFIG_USB_GADGET_AU1X00
@@ -212,5 +217,7 @@ static inline int usb_gadget_controller_number(struct usb_gadget *gadget)
 		return 0x20;
 	else if (gadget_is_m66592(gadget))
 		return 0x21;
+	else if (gadget_is_nxc2600(gadget))
+		return 0x22;
 	return -ENOENT;
 }

@@ -979,6 +979,11 @@ static __init void build_tlb_write_entry(u32 **p, struct label **l,
 		tlbw(p);
 		break;
 
+       case CPU_NXC2600:
+                tlbw(p);
+                i_nop(p);
+                break;
+
 	default:
 		panic("No TLB refill handler yet (CPU type: %d)",
 		      current_cpu_data.cputype);

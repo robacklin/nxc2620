@@ -712,9 +712,9 @@ static int nand_wait(struct mtd_info *mtd, struct nand_chip *chip)
 	int status, state = chip->state;
 
 	if (state == FL_ERASING)
-		timeo += (HZ * 400) / 1000;
+		timeo += (HZ * 4000) / 1000;
 	else
-		timeo += (HZ * 20) / 1000;
+		timeo += (HZ * 2000) / 1000;
 
 	led_trigger_event(nand_led_trigger, LED_FULL);
 

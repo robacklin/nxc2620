@@ -10,10 +10,6 @@
 #define _ASM_PAGE_H
 
 
-#ifdef __KERNEL__
-
-#include <spaces.h>
-
 /*
  * PAGE_SHIFT determines the page size
  */
@@ -29,8 +25,16 @@
 #ifdef CONFIG_PAGE_SIZE_64KB
 #define PAGE_SHIFT	16
 #endif
+#ifndef PAGE_SHIFT
+#define	PAGE_SHIFT	12
+#endif
 #define PAGE_SIZE	(1UL << PAGE_SHIFT)
 #define PAGE_MASK       (~((1 << PAGE_SHIFT) - 1))
+
+#ifdef __KERNEL__
+
+#include <spaces.h>
+
 
 #ifndef __ASSEMBLY__
 

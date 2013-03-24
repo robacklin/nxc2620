@@ -605,6 +605,10 @@ config MTD_SHARP_SL
 	help
 	  This enables access to the flash chip on the Sharp SL Series of PDAs.
 
+config MTD_NXC2600_NOR
+	bool "NXC2600 nor flash"
+	depends on MTD_PHYSMAP && ICNEXUS_NXC2600
+
 config MTD_PLATRAM
 	tristate "Map driver for platform device RAM (mtd-ram)"
 	select MTD_RAM

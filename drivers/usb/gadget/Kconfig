@@ -300,6 +300,19 @@ config USB_AT91
 	depends on USB_GADGET_AT91
 	default USB_GADGET
 
+config USB_GADGET_NXC2600
+	bool "NXC2600 USB device"
+	depends on ICNEXUS_NXC2600 && USB_GADGET
+	help
+
+config USB_NXC2600
+        tristate
+        depends on USB_GADGET_NXC2600
+        default USB_GADGET
+        select USB_GADGET_SELECTED
+	select USB_GADGET_DUALSPEED
+
+
 config USB_GADGET_DUMMY_HCD
 	boolean "Dummy HCD (DEVELOPMENT)"
 	depends on (USB=y || (USB=m && USB_GADGET=m)) && EXPERIMENTAL

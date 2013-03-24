@@ -100,3 +100,6 @@ config MMC_TIFM_SD
           To compile this driver as a module, choose M here: the
 	  module will be called tifm_sd.
 
+config MMC_NXC2600
+	tristate "ICNEXUS NXC2600 MMC/SD Interface support"
+	depends on ICNEXUS_NXC2600

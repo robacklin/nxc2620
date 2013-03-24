@@ -265,8 +265,12 @@
 #define DRIVER_NAME		"g_file_storage"
 #define DRIVER_VERSION		"28 November 2005"
 
-static const char longname[] = DRIVER_DESC;
+//static const char longname[] = DRIVER_DESC;
+static char longname[64] = DRIVER_DESC;
 static const char shortname[] = DRIVER_NAME;
+static char vendor_id[64] = "Linux   ";
+static char product_id[64] = "File-Stor Gadget";
+static char manufacturer[64];
 
 MODULE_DESCRIPTION(DRIVER_DESC);
 MODULE_AUTHOR("Alan Stern");
@@ -420,6 +424,13 @@ MODULE_PARM_DESC(release, "USB release number");
 
 module_param_named(buflen, mod_data.buflen, uint, S_IRUGO);
 MODULE_PARM_DESC(buflen, "I/O buffer size");
+
+module_param_string(name, longname, sizeof(longname), S_IRUGO);
+MODULE_PARM_DESC(name, "names of vendor");
+
+module_param_string(vendor_id, vendor_id, sizeof(vendor_id), S_IRUGO);
+module_param_string(product_id, product_id, sizeof(product_id), S_IRUGO);
+module_param_string(manufacturer, manufacturer, sizeof(manufacturer), S_IRUGO);
 
 #endif /* CONFIG_USB_FILE_STORAGE_TEST */
 
@@ -1026,7 +1037,7 @@ static const struct usb_descriptor_header *hs_function[] = {
 
 /* The CBI specification limits the serial string to 12 uppercase hexadecimal
  * characters. */
-static char				manufacturer[64];
+//static char				manufacturer[64];
 static char				serial[13];
 
 /* Static strings, in UTF-8 (for simplicity we use only ASCII characters) */
@@ -1397,8 +1408,10 @@ static int standard_setup_req(struct fsg_dev *fsg,
 #ifdef CONFIG_USB_GADGET_DUALSPEED
 		case USB_DT_DEVICE_QUALIFIER:
 			VDBG(fsg, "get device qualifier\n");
+#if 0
 			if (!fsg->gadget->is_dualspeed)
 				break;
+#endif
 			value = sizeof dev_qualifier;
 			memcpy(req->buf, &dev_qualifier, value);
 			break;
@@ -2058,8 +2071,8 @@ static int do_inquiry(struct fsg_dev *fsg, struct fsg_buffhd *bh)
 {
 	u8	*buf = (u8 *) bh->buf;
 
-	static char vendor_id[] = "Linux   ";
-	static char product_id[] = "File-Stor Gadget";
+	//static char vendor_id[] = "Linux   ";
+	//static char product_id[] = "File-Stor Gadget";
 
 	if (!fsg->curlun) {		// Unsupported LUNs are okay
 		fsg->bad_lun_okay = 1;
@@ -3987,11 +4000,11 @@ static int __init fsg_bind(struct usb_gadget *gadget)
 
 	/* This should reflect the actual gadget power source */
 	usb_gadget_set_selfpowered(gadget);
-
+#if 0
 	snprintf(manufacturer, sizeof manufacturer, "%s %s with %s",
 			init_utsname()->sysname, init_utsname()->release,
 			gadget->name);
-
+#endif
 	/* On a real device, serial[] would be loaded from permanent
 	 * storage.  We just encode it from the driver version string. */
 	for (i = 0; i < sizeof(serial) - 2; i += 2) {

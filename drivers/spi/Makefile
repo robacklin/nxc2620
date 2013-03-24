@@ -27,6 +27,8 @@ obj-$(CONFIG_SPI_S3C24XX_GPIO)		+= spi_s3c24xx_gpio.o
 obj-$(CONFIG_SPI_S3C24XX)		+= spi_s3c24xx.o
 obj-$(CONFIG_SPI_TXX9)			+= spi_txx9.o
 obj-$(CONFIG_SPI_XILINX)		+= xilinx_spi.o
+obj-$(CONFIG_SPI_NXC2600)		+= spi_nxc2600.o
+obj-$(CONFIG_SPI_NXC2600_GPIO)		+= spi_nxc2600_gpio.o
 # 	... add above this line ...
 
 # SPI protocol drivers (device/link on bus)

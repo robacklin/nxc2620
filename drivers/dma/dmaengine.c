@@ -185,8 +185,10 @@ static void dma_client_chan_alloc(struct dma_client *client)
 				if (ack == DMA_ACK) {
 					dma_chan_get(chan);
 					kref_get(&device->refcount);
-				} else if (ack == DMA_NAK)
+				} else if (ack == DMA_NAK) {
+					chan->device->device_free_chan_resources(chan);
 					return;
+				}
 			}
 		}
 }

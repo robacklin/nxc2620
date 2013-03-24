@@ -99,6 +99,7 @@ struct ucb1400 {
 static int adcsync;
 static int ts_delay = 55; /* us */
 static int ts_delay_pressure;	/* us */
+static int touched = 0;
 
 static inline u16 ucb1400_reg_read(struct ucb1400 *ucb, u16 reg)
 {
@@ -255,15 +256,26 @@ static inline void ucb1400_ts_irq_disable(struct ucb1400 *ucb)
 
 static void ucb1400_ts_evt_add(struct input_dev *idev, u16 pressure, u16 x, u16 y)
 {
+
 	input_report_abs(idev, ABS_X, x);
-	input_report_abs(idev, ABS_Y, y);
+        input_report_abs(idev, ABS_Y, y);
 	input_report_abs(idev, ABS_PRESSURE, pressure);
+	if(!touched)
+	{
+		input_report_key(idev, BTN_TOUCH, 1);
+		touched = 1;
+	}
 	input_sync(idev);
 }
 
 static void ucb1400_ts_event_release(struct input_dev *idev)
 {
 	input_report_abs(idev, ABS_PRESSURE, 0);
+	if(touched)
+	{
+		input_report_key(idev, BTN_TOUCH, 0);
+		touched = 0;
+	}
 	input_sync(idev);
 }
 
@@ -293,9 +305,11 @@ static int ucb1400_ts_thread(void *_ucb)
 	sched_setscheduler(tsk, SCHED_FIFO, &param);
 
 	set_freezable();
+
 	while (!kthread_should_stop()) {
 		unsigned int x, y, p;
 		long timeout;
+		unsigned int i;
 
 		ucb->ts_restart = 0;
 
@@ -304,11 +318,21 @@ static int ucb1400_ts_thread(void *_ucb)
 			ucb1400_handle_pending_irq(ucb);
 		}
 
-		ucb1400_adc_enable(ucb);
-		x = ucb1400_ts_read_xpos(ucb);
-		y = ucb1400_ts_read_ypos(ucb);
-		p = ucb1400_ts_read_pressure(ucb);
-		ucb1400_adc_disable(ucb);
+		p = 0;
+		x = 0;
+		y = 0;
+		for(i=0; i<8; i++)
+		{
+			ucb1400_adc_enable(ucb);
+			p += ucb1400_ts_read_pressure(ucb);
+			x += ucb1400_ts_read_xpos(ucb);
+			y += ucb1400_ts_read_ypos(ucb);
+			ucb1400_adc_disable(ucb);
+			udelay(30);
+		}
+		x/=i;
+		y/=i;
+		p/=i;
 
 		/* Switch back to interrupt mode. */
 		ucb1400_ts_mode_int(ucb);
@@ -392,8 +416,10 @@ static void ucb1400_ts_close(struct input_dev *idev)
 	struct ucb1400 *ucb = input_get_drvdata(idev);
 
 	if (ucb->ts_task)
+	{
 		kthread_stop(ucb->ts_task);
-
+		while(ucb->ts_task!=NULL) udelay(100);
+	}
 	ucb1400_ts_irq_disable(ucb);
 	ucb1400_reg_write(ucb, UCB_TS_CR, 0);
 }
@@ -429,7 +455,7 @@ static int ucb1400_ts_resume(struct device *dev)
 static int ucb1400_detect_irq(struct ucb1400 *ucb)
 {
 	unsigned long mask, timeout;
-
+#if CONFIG_TOUCHSCREEN_UCB1400_IRQ == 0
 	mask = probe_irq_on();
 	if (!mask) {
 		probe_irq_off(mask);
@@ -466,6 +492,9 @@ static int ucb1400_detect_irq(struct ucb1400 *ucb)
 
 	/* Read triggered interrupt. */
 	ucb->irq = probe_irq_off(mask);
+#else
+	ucb->irq = CONFIG_TOUCHSCREEN_UCB1400_IRQ;
+#endif
 	if (ucb->irq < 0 || ucb->irq == NO_IRQ)
 		return -ENODEV;
 
@@ -485,6 +514,7 @@ static int ucb1400_ts_probe(struct device *dev)
 		goto err_free_devs;
 	}
 
+	ucb->ts_task = NULL;
 	ucb->ts_idev = idev;
 	ucb->adcsync = adcsync;
 	ucb->ac97 = to_ac97_t(dev);
@@ -527,6 +557,8 @@ static int ucb1400_ts_probe(struct device *dev)
 	ucb1400_adc_disable(ucb);
 	printk(KERN_DEBUG "UCB1400: x/y = %d/%d\n", x_res, y_res);
 
+        idev->evbit[0] = BIT(EV_KEY) | BIT(EV_ABS);
+        idev->keybit[LONG(BTN_TOUCH)] = BIT(BTN_TOUCH);
 	input_set_abs_params(idev, ABS_X, 0, x_res, 0, 0);
 	input_set_abs_params(idev, ABS_Y, 0, y_res, 0, 0);
 	input_set_abs_params(idev, ABS_PRESSURE, 0, 0, 0, 0);

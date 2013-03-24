@@ -3935,7 +3935,7 @@ netdev_dma_event(struct dma_client *client, struct dma_chan *chan,
 	int i, found = 0, pos = -1;
 	struct net_dma *net_dma =
 		container_of(client, struct net_dma, client);
-	enum dma_state_client ack = DMA_DUP; /* default: take no action */
+	enum dma_state_client ack = DMA_NAK; //DMA_DUP; /* default: take no action */
 
 	spin_lock(&net_dma->lock);
 	switch (state) {

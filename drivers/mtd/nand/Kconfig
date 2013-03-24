@@ -264,6 +264,9 @@ config MTD_NAND_CM_X270
 	tristate "Support for NAND Flash on CM-X270 modules"
 	depends on MTD_NAND && MACH_ARMCORE
 
+config MTD_NAND_NXC2600
+	bool "Support for NAND Flash on NXC2600"
+	depends on MTD_NAND && ICNEXUS_NXC2600
 
 config MTD_NAND_NANDSIM
 	tristate "Support for NAND Flash Simulator"

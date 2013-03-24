@@ -278,6 +278,36 @@ config SERIAL_8250_RM9K
 	  port hardware found on MIPS RM9122 and similar processors.
 	  If unsure, say N.
 
+config SERIAL_8250_NXC2600
+	bool "NXC2600 serial port support"
+	depends on SERIAL_8250 && ICNEXUS_NXC2600
+	help
+
+config NXC2600_UART0
+	bool "NXC2600 serial port 0"
+	depends on SERIAL_8250_NXC2600
+	help
+
+config NXC2600_UART1
+	bool "NXC2600 serial port 1"
+	depends on SERIAL_8250_NXC2600
+	help
+
+config NXC2600_UART2
+	bool "NXC2600 serial port 2"
+	depends on SERIAL_8250_NXC2600
+	help
+
+config NXC2600_UART3
+	bool "NXC2600 serial port 3"
+	depends on SERIAL_8250_NXC2600
+	help
+
+config NXC2600_UART3_CTSRTS
+	bool "NXC2600 serial port 3 CTS/RTS enable"
+	depends on SERIAL_8250_NXC2600 && NXC2600_UART3
+	help
+
 comment "Non-8250 serial port support"
 
 config SERIAL_AMBA_PL010

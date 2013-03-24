@@ -926,11 +926,17 @@ MODULE_LICENSE ("GPL");
 #define PS3_SYSTEM_BUS_DRIVER	ps3_ohci_driver
 #endif
 
+#ifdef CONFIG_USB_OHCI_HCD_NXC2600
+#include "ohci-nxc2600.c"
+#endif
+
+
 #if	!defined(PCI_DRIVER) &&		\
 	!defined(PLATFORM_DRIVER) &&	\
 	!defined(OF_PLATFORM_DRIVER) &&	\
 	!defined(SA1111_DRIVER) &&	\
-	!defined(PS3_SYSTEM_BUS_DRIVER)
+	!defined(PS3_SYSTEM_BUS_DRIVER) && \
+	!defined(CONFIG_USB_OHCI_HCD_NXC2600)
 #error "missing bus glue for ohci-hcd"
 #endif
 
@@ -974,7 +980,9 @@ static int __init ohci_hcd_mod_init(void)
 	if (retval < 0)
 		goto error_pci;
 #endif
-
+#ifdef CONFIG_USB_OHCI_HCD_NXC2600
+	retval = ohci_hcd_nxc2600_init();
+#endif
 	return retval;
 
 	/* Error path */
@@ -1017,6 +1025,9 @@ static void __exit ohci_hcd_mod_exit(void)
 #endif
 #ifdef PS3_SYSTEM_BUS_DRIVER
 	ps3_ohci_driver_unregister(&PS3_SYSTEM_BUS_DRIVER);
+#endif
+#ifdef CONFIG_USB_OHCI_HCD_NXC2600
+	ohci_hcd_nxc2600_cleanup();
 #endif
 }
 module_exit(ohci_hcd_mod_exit);

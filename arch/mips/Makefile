@@ -565,6 +565,14 @@ core-$(CONFIG_TOSHIBA_RBTX4938) += arch/mips/tx4938/common/
 cflags-$(CONFIG_TOSHIBA_RBTX4938) += -Iinclude/asm-mips/mach-tx49xx
 load-$(CONFIG_TOSHIBA_RBTX4938) += 0xffffffff80100000
 
+#
+# ICNexus NXC2600 dvb
+#
+core-$(CONFIG_ICNEXUS_NXC2600) += arch/mips/icnexus/nxc2600/
+cflags-$(CONFIG_ICNEXUS_NXC2600) += -Iinclude/asm-mips/mach-nxc2600
+load-$(CONFIG_ICNEXUS_NXC2600) += 0x80004000
+
+
 cflags-y			+= -Iinclude/asm-mips/mach-generic
 drivers-$(CONFIG_PCI)		+= arch/mips/pci/
 
@@ -642,6 +650,9 @@ vmlinux.ecoff: $(vmlinux-32)
 
 vmlinux.srec: $(vmlinux-32)
 	+@$(call makeboot,$@)
+
+uImage: $(vmlinux-32)
+	+@$(call makeboot,$@) LOADADDR=$(load-y)
 
 CLEAN_FILES += vmlinux.ecoff \
 	       vmlinux.srec

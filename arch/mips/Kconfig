@@ -595,6 +595,17 @@ config WR_PPMC
 	  This enables support for the Wind River MIPS32 4KC PPMC evaluation
 	  board, which is based on GT64120 bridge chip.
 
+config ICNEXUS_NXC2600
+        bool "ICNEXUS NXC2600"
+	select DMA_NONCOHERENT
+        select SYS_SUPPORTS_32BIT_KERNEL
+        select SYS_SUPPORTS_LITTLE_ENDIAN
+        select SYS_HAS_CPU_MIPS32_R1
+        select EARLY_PRINTK
+	select NXC2600_GPIO
+        help
+          This ICNEXUS board is support for the NXC2600-based SOC.
+
 endchoice
 
 source "arch/mips/au1000/Kconfig"
@@ -605,6 +616,7 @@ source "arch/mips/sibyte/Kconfig"
 source "arch/mips/tx4927/Kconfig"
 source "arch/mips/tx4938/Kconfig"
 source "arch/mips/vr41xx/Kconfig"
+source "arch/mips/icnexus/nxc2600/Kconfig"
 
 endmenu
 

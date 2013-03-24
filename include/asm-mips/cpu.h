@@ -33,6 +33,7 @@
 #define PRID_COMP_TOSHIBA	0x070000
 #define PRID_COMP_LSI		0x080000
 #define PRID_COMP_LEXRA		0x0b0000
+#define PRID_COMP_ICNEXUS	0xd00000
 
 
 /*
@@ -43,6 +44,7 @@
 #define PRID_IMP_R2000		0x0100
 #define PRID_IMP_AU1_REV1	0x0100
 #define PRID_IMP_AU1_REV2	0x0200
+#define PRID_IMP_NXC2600	0x0200
 #define PRID_IMP_R3000		0x0200		/* Same as R2000A  */
 #define PRID_IMP_R6000		0x0300		/* Same as R3000A  */
 #define PRID_IMP_R4000		0x0400
@@ -217,8 +219,9 @@
 #define CPU_R14000		64
 #define CPU_LOONGSON1           65
 #define CPU_LOONGSON2           66
+#define	CPU_NXC2600		67
 
-#define CPU_LAST		66
+#define CPU_LAST		67
 
 /*
  * ISA Level encodings

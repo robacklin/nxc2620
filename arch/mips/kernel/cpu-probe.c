@@ -159,6 +159,7 @@ static inline void check_wait(void)
 	case CPU_5KC:
 	case CPU_25KF:
 	case CPU_PR4450:
+	case CPU_NXC2600:
 		cpu_wait = r4k_wait;
 		break;
 
@@ -792,6 +793,23 @@ static inline void cpu_probe_philips(struct cpuinfo_mips *c)
 	}
 }
 
+static inline void cpu_probe_icnexus(struct cpuinfo_mips *c)
+{
+	decode_configs(c);
+	switch (c->processor_id & 0xff00) {
+	case PRID_IMP_NXC2600:
+		c->cputype = CPU_NXC2600;
+		c->isa_level = MIPS_CPU_ISA_M32R1;
+		c->tlbsize = 32;
+	        c->scache.flags = MIPS_CACHE_NOT_PRESENT;
+		c->options &= ~MIPS_CPU_COUNTER;
+		break;
+	default:
+		panic("Unknown ICnexus Core!");
+		break;
+	}
+		
+}
 
 __init void cpu_probe(void)
 {
@@ -820,6 +838,9 @@ __init void cpu_probe(void)
 		break;
  	case PRID_COMP_PHILIPS:
 		cpu_probe_philips(c);
+		break;
+	case PRID_COMP_ICNEXUS:
+		cpu_probe_icnexus(c);
 		break;
 	default:
 		c->cputype = CPU_UNKNOWN;

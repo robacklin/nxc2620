@@ -1364,6 +1364,8 @@ config CRAMFS
 
 	  If unsure, say N.
 
+source "fs/yaffs2/Kconfig"
+
 config VXFS_FS
 	tristate "FreeVxFS file system support (VERITAS VxFS(TM) compatible)"
 	depends on BLOCK

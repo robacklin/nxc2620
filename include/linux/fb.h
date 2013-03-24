@@ -24,6 +24,9 @@ struct dentry;
 #else
 #define FBIO_CURSOR            _IOWR('F', 0x08, struct fb_cursor)
 #endif
+#define NXC2600_SET_BRIGHTNESS _IOW('F', 3, unsigned char) //marvin+
+#define NXC2600_GET_BRIGHTNESS _IOR('F', 4, unsigned char) //marvin+
+
 /* 0x4607-0x460B are defined below */
 /* #define FBIOGET_MONITORSPEC	0x460C */
 /* #define FBIOPUT_MONITORSPEC	0x460D */

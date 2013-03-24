@@ -150,6 +150,65 @@ config TOUCHSCREEN_TOUCHRIGHT
 	  To compile this driver as a module, choose M here: the
 	  module will be called touchright.
 
+config TOUCHSCREEN_WM97XX
+ tristate "Support for WM97xx AC97 touchscreen controllers"
+ depends on AC97_BUS
+
+
+config TOUCHSCREEN_WM9705
+ bool "WM9705 Touchscreen interface support"
+ depends on TOUCHSCREEN_WM97XX
+ help 
+   Say Y here if you have a Wolfson Microelectronics WM9705 touchscreen
+   controller connected to your system.
+
+   If unsure, say N.
+
+   To compile this driver as a module, choose M here: the
+   module will be called wm9705.
+ 
+config TOUCHSCREEN_WM9712
+ bool "WM9712 Touchscreen interface support"
+ depends on TOUCHSCREEN_WM97XX
+ help
+   Say Y here if you have a Wolfson Microelectronics WM9712 touchscreen
+   controller connected to your system.
+
+   If unsure, say N.
+
+   To compile this driver as a module, choose M here: the
+   module will be called wm9712. 
+
+config TOUCHSCREEN_WM9713
+ bool "WM9713 Touchscreen interface support"
+ depends on TOUCHSCREEN_WM97XX
+ help
+   Say Y here if you have a Wolfson Microelectronics WM9713 touchscreen
+   controller connected to your system.
+
+   If unsure, say N.
+
+   To compile this driver as a module, choose M here: the
+   module will be called wm9713.
+
+config TOUCHSCREEN_WM97XX_NXC2600
+ tristate "WM97xx NXC2600 accelerated touch"
+ depends on TOUCHSCREEN_WM97XX && ICNEXUS_NXC2600
+ help
+   Say Y here for support for streaming mode with WM97xx touchscreens
+   on NXC2600 systems.
+
+   If unsure, say N
+
+   To compile this driver as a module, choose M here: the
+   module will be called wm97xx-ts-nxc2600
+
+config TOUCHSCREEN_WM97XX_IRQ_GPIO_PIN
+        int "WM97XX Pen Down IRQ GPIO Pin"
+        depends TOUCHSCREEN_WM97XX_NXC2600
+        default 0
+
+
 config TOUCHSCREEN_TOUCHWIN
 	tristate "Touchwin serial touchscreen"
 	select SERIO
@@ -176,6 +235,11 @@ config TOUCHSCREEN_UCB1400
 
 	  To compile this driver as a module, choose M here: the
 	  module will be called ucb1400_ts.
+
+config TOUCHSCREEN_UCB1400_IRQ
+	int "UCB1400 IRQ Number"
+	depends TOUCHSCREEN_UCB1400
+	default 0
 
 config TOUCHSCREEN_USB_COMPOSITE
 	tristate "USB Touchscreen Driver"

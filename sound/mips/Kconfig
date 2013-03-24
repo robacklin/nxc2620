@@ -11,5 +11,13 @@ config SND_AU1X00
 	help
 	  ALSA Sound driver for the Au1x00's AC97 port.
 
+config SND_NXC2600_AC97
+	tristate "NXC2600 AC97 Port Driver"
+        depends on ICNEXUS_NXC2600 && SND
+        select SND_PCM
+        select SND_AC97_CODEC
+        help
+          ALSA Sound driver for the NXC2600's AC97 port.
+
 endmenu
 

@@ -833,6 +833,30 @@ config BLK_DEV_IDE_AU1XXX_SEQTS_PER_RQ
        default "128"
        depends on BLK_DEV_IDE_AU1XXX
 
+config BLK_DEV_IDE_NXC2600
+       bool "Gen bus IDE for IC Nexus NXC2600"
+       depends on ICNEXUS_NXC2600
+
+config NXC2600_IDE_CS
+	int "cs number"
+	depends on BLK_DEV_IDE_NXC2600
+	default 5
+
+config NXC2600_IDE_CS_ADDR
+	hex "cs map address"
+	depends on BLK_DEV_IDE_NXC2600
+	default 0x09000000
+
+config NXC2600_IDE_IRQ_PIN
+	int "irq pin number"
+	depends on BLK_DEV_IDE_NXC2600
+	default 27
+
+config NXC2600_IDE_RESET_PIN
+	int "reset pin number"
+	depends on BLK_DEV_IDE_NXC2600
+	default 88
+
 config IDE_ARM
 	def_bool ARM && (ARCH_CLPS7500 || ARCH_RPC || ARCH_SHARK)
 	select IDE_GENERIC

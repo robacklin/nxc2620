@@ -153,6 +153,7 @@
 #define SST39LF040	0x00D7
 #define SST39SF010A	0x00B5
 #define SST39SF020A	0x00B6
+#define SST39VF6401B	0x236d
 #define SST49LF004B	0x0060
 #define SST49LF040B	0x0050
 #define SST49LF008A	0x005a
@@ -1509,6 +1510,22 @@ static const struct amd_flash_info jedec_table[] = {
                        ERASEINFO(0x1000,256),
                        ERASEINFO(0x1000,256)
                }
+
+        }, {
+               .mfr_id         = MANUFACTURER_SST,     /* should be CFI */
+               .dev_id         = SST39VF6401B,
+               .name           = "SST 39VF6401B",
+               .uaddr          = {
+                       [0] = MTD_UADDR_0x5555_0x2AAA,  /* x8 */
+                       [1] = MTD_UADDR_0x5555_0x2AAA   /* x16 */
+               },
+               .DevSize        = SIZE_8MiB,
+               .CmdSet         = P_ID_AMD_STD,
+               .NumEraseRegions= 1,
+               .regions        = {
+                       ERASEINFO(0x10000,128),
+               }
+
 
        }, {
 		.mfr_id		= MANUFACTURER_ST,	/* FIXME - CFI device? */

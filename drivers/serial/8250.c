@@ -182,7 +182,7 @@ static const struct serial8250_config uart_config[] = {
 		.name		= "16550A",
 		.fifo_size	= 16,
 		.tx_loadsz	= 16,
-		.fcr		= UART_FCR_ENABLE_FIFO | UART_FCR_R_TRIG_10,
+		.fcr		= UART_FCR_ENABLE_FIFO | UART_FCR_R_TRIG_00,
 		.flags		= UART_CAP_FIFO,
 	},
 	[PORT_CIRRUS] = {
@@ -391,6 +391,17 @@ serial_out(struct uart_8250_port *up, int offset, int value)
 {
 	/* Save the offset before it's remapped */
 	int save_offset = offset;
+
+#ifdef CONFIG_SERIAL_8250_NXC2600
+       if(offset == UART_FCR)
+               value |= 0x10;
+
+#ifdef CONFIG_NXC2600_UART3_CTSRTS
+	if((offset == UART_MCR) && (up->port.membase==0xb0033000))
+		value = (value|0x80);
+#endif
+#endif
+
 	offset = map_8250_out_reg(up, offset) << up->port.regshift;
 
 	switch (up->port.iotype) {
@@ -1351,7 +1362,7 @@ receive_chars(struct uart_8250_port *up, unsigned int *status)
 	spin_lock(&up->port.lock);
 	*status = lsr;
 }
-
+static void wait_for_xmitr(struct uart_8250_port *up, int bits);
 static void transmit_chars(struct uart_8250_port *up)
 {
 	struct circ_buf *xmit = &up->port.info->xmit;
@@ -1374,6 +1385,7 @@ static void transmit_chars(struct uart_8250_port *up)
 
 	count = up->tx_loadsz;
 	do {
+		wait_for_xmitr(up, UART_LSR_THRE);
 		serial_out(up, UART_TX, xmit->buf[xmit->tail]);
 		xmit->tail = (xmit->tail + 1) & (UART_XMIT_SIZE - 1);
 		up->port.icount.tx++;

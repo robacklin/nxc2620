@@ -1401,8 +1401,8 @@ eth_setup (struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 			break;
 #ifdef CONFIG_USB_GADGET_DUALSPEED
 		case USB_DT_DEVICE_QUALIFIER:
-			if (!gadget->is_dualspeed)
-				break;
+			//if (!gadget->is_dualspeed)
+			//	break;
 			value = min (wLength, (u16) sizeof dev_qualifier);
 			memcpy (req->buf, &dev_qualifier, value);
 			break;

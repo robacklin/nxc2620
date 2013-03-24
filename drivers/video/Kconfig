@@ -1775,6 +1775,21 @@ config FB_SM501
 
 	  If unsure, say N.
 
+#config SM50X_PANEL_FG0700A0DSSWAGT1
+#        bool "FG0700A0DSSWAGT1"
+#        depends on FB_SM501 && ICNEXUS_NXC2600
+#        default y
+
+config SM50X_PANEL_TFP507MWVGAHBE_03
+        bool "TFP507MWVGAHBE_03"
+        depends on FB_SM501 && ICNEXUS_NXC2600
+        default n
+
+
+config SM50X_PANEL_DATAIMAGE_CLAA070LC0ACW
+	bool "DATAIMAGE CLAA070LC0ACW"
+	depends on FB_SM501 && ICNEXUS_NXC2600
+        default n
 
 config FB_PNX4008_DUM
 	tristate "Display Update Module support on Philips PNX4008 board"
@@ -1832,6 +1847,44 @@ config FB_XILINX
 	  Include support for the Xilinx ML300/ML403 reference design
 	  framebuffer. ML300 carries a 640*480 LCD display on the board,
 	  ML403 uses a standard DB15 VGA connector.
+
+config FB_NXC2600
+	tristate "NXC2600 lcd frame buffer support"
+	depends on FB && ICNEXUS_NXC2600
+	select FB_CFB_FILLRECT
+	select FB_CFB_COPYAREA
+	select FB_CFB_IMAGEBLIT
+
+config NXC2600_PANEL_FG0700A0DSSWAGT1
+	bool "Data Image FG0700A0DSSWAGT1"
+	depends on FB_NXC2600
+	default y
+
+config NXC2600_PANEL_TD028THED1
+	bool "TOPPOLY TD028THED1"
+	depends on FB_NXC2600
+	default n
+	
+config NXC2600_PANEL_TFP507MWVGAHBE_03
+	bool "TFP507MWVGAHBE_03"
+	depends on FB_NXC2600
+	default n
+
+config NXC2600_PANEL_SAMSUNG_LTE400WQF02
+	bool "SAMSUNG LTE400WQF02"
+	depends on FB_NXC2600
+	default n
+
+config NXC2600_PANEL_TOPSUN_TS188A_T
+	bool "TOPSUN TS188A-T"
+	depends on FB_NXC2600
+        default n
+
+config NXC2600_PANEL_TMT043DNAFWU3
+	bool "TMT043DNAFWU3"
+	depends on FB_NXC2600
+	default n
+
 
 if ARCH_OMAP
 	source "drivers/video/omap/Kconfig"

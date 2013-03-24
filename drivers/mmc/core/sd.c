@@ -371,6 +371,20 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
 	if (err != MMC_ERR_NONE)
 		goto free_card;
 
+#ifdef CONFIG_MMC_NXC2600
+	{
+	struct mmc_command cmd;
+        cmd.opcode = SD_APP_SET_BUS_WIDTH;
+        cmd.arg = SD_BUS_WIDTH_4;
+        cmd.flags = MMC_RSP_R1 | MMC_CMD_AC;
+
+        err = mmc_wait_for_app_cmd(host, card, &cmd, MMC_CMD_RETRIES);
+        if (err != MMC_ERR_NONE)
+                goto free_card;
+
+	}
+#endif
+
 	if (!oldcard) {
 		/*
 		 * Fetch SCR from card.

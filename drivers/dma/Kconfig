@@ -40,4 +40,8 @@ config INTEL_IOP_ADMA
         ---help---
           Enable support for the Intel(R) IOP Series RAID engines.
 
+config NXC2600_DMA
+	bool "ICNEXUS NXC2600 DMA support"
+	depends on DMA_ENGINE && ICNEXUS_NXC2600
+
 endmenu
