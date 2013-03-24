@@ -42,7 +42,7 @@ vmlinux.srec: $(VMLINUX)
 uImage: vmlinux.bin
 	@rm -f $(obj)/vmlinux.bin.gz
 	@gzip -9 $(obj)/vmlinux.bin
-	@mkimage -A mips -O linux -T kernel -C gzip -a $(LOADADDR) -e 0x`grep kernel_entry System.map | cut -f1 -d \ ` -n kernel -d $(obj)/vmlinux.bin.gz $(obj)/uImage.kernel
+	@mkimage -A mips -O linux -T kernel -C gzip -a $(LOADADDR) -e 0x`grep kernel_entry System.map | cut -f1 -d \ ` -n kernel -d $(obj)/vmlinux.bin.gz $(obj)/uImage
 #	@cp $(obj)/uImage.kernel /tftpboot
 
 $(obj)/addinitrd: $(obj)/addinitrd.c
